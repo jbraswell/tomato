@@ -17,19 +17,20 @@ jobs:
           on:
             branch: travis
 
-#    - stage: deploy to ecs
-#      if: branch IN (master) AND type != pull_request
-#      env:
-#        - AWS_DEFAULT_REGION=us-east-1
-#        - secure: "He2FsOfRQILckDqmVInhUeG743pp2baqSBOvpX+JQogDwNIMeLbSdC59bb+9twaAoWvGJzZjcxrkO3QQoPwCMFuSUE8wU/YIfDsYJY0ONaRYvAX/ZnpRKHVePBwJccOfUGnk+62EubM3n3QoiFa/h6NzQ6EzjR1fyg0q30jmpOA2H+tLhFjTd7RZKW3ZoboTUtYQUY/Ql9mmoTXOENqqtHaSaeA7v+ttwauHrsxixRx95Vlaza3VLfqM82O26IBs7MWNZbnv/MStKB/HUkJM/U79OXochnrRge/rWvKa6UoJ9Smcb65F3/yf4p4ykzp0i+hgmoWBIBQPH7DTb6KnFAAfgdSNeW9NJtxVxgOEHBXExf60jWbVEB2xspJlfnfLaXh8Cn0f83mJzYrbf55znDQhvo8e5myh+zifRuDGbMpfCJRbLbDDFx1hY0D8ZOTUpaoMLVJBmHhInaGj7hOnRYgG4QgvnNIgGuaLyuvWQPZgdTsXXZ/BM0Hv9ITT2xPiKMmQHArbjXV/cm+u7GKpRZpnvYcOPlqB/eFRpCJCro7tFYqfYzH4ReZDhnH+zKpqpI6MMwp6bAqYwcytRJWHfGzQTT0uxKe5ZYdQzBRWYV6dZmOKZt4YIwRwP2H+aSbHvfvm5mWVbZ8KX+bx0t+jQtElHditTfjM1zGOYCX6/mw="
-#        - secure: "IursVz2FVP2sCdHJ/Ap/MYqV7/5Eg66XAEVwaw1YyelQlZZG5fzforR+vcY24sA1fuWnl5GFHBP6RheKU0G4rQL2CglF+SnolE1kOjL6eRSJdwRQlMH06qjPmEJdmjxHcl5MwIPI6suTwjSJqfkKfNccMkptW6BIdGvG9T4cEFyJVuRbbmKaMN7WiX8ouHN7VNns7TRMKBQ37KFLrKhwzKEyQ+6nBc5fWQUmQVsPQrvIxA5DYLzq/ZqTnABTC0sv8pjtI9zJYCn0LCu4mNXW8tdD4vKUW20mTAAYSUq/csMSF8PwnvXTcSDO2963/WoqjsG+f1jwcsD4TOedNNrV7Rgkq62lVae9edmlAyNiXvoqSK2adYALRVwC0oFsLEcDBihactPFkDNZxbbc4Wa+Rp3MesVCFFiCXTdQkE5blx5H2ghsmELlXjGOJ5YBA05cvZz3tb/sXlNzU0Zl3J/v4vjr2YMqmX7gyjW+exv/5yVoEieduu3ojnd7a8bWswq7CHuf0+fJ/hg0AJBfrT/wS1f+jY3Ru2tyIe3162cjehjZkoLBwC5GUBYn51Z692mbrY159ktcKoMybcuMAq1XahSLNPntG8ZeFxH2ywE8V1guk3t6zoB19W+w/4tYUoOUoYyi8TsLuuaLAghg9idj1KtcIJiOBFJTR/ZKQtc3ypQ="
-#      install:
-#        - cd terraform
-#        - wget https://releases.hashicorp.com/terraform/0.12.8/terraform_0.12.8_linux_amd64.zip
-#        - unzip terraform_0.12.8_linux_amd64.zip
-#        - rm -f terraform_0.12.8_linux_amd64.zip
-#      script:
-#        - ./terraform init -input=false
+    - stage: deploy to ecs
+      if: branch IN (master) AND type != pull_request
+      env:
+        - AWS_DEFAULT_REGION=us-east-1
+        - secure: "TGAVwiI/mqteZiPVqzDbDWG0+A9M0cyU7dG4pFVPhWxDomnLGlqQ/XBuVQo420dE34bVbHn4qDUpj4FgoaTwYDGSYEqxdaYjulEfD8AXUZ7d0eemNd0mt87KCoEk1Lt7a+PkwxD2fu2hPcWmW+7oedcMYCC4UX/DcVXlLsSPkMhL/FDzC55JsZwoUOFH6RVX7Acq9ZkCXCwOFNLevh3A4oAVpdhSu0mcubC+b22hRJPvUsjenoO9h5aZcVRWiHKMS5RGn+8+rs2xjAEBkZ/cTc8yO/SvE9kG5yfWIxrPffRWqhbjaXJZK+tu6f2NCfM1ohW/1dRVQjeWMG48q1lMB6e1vU01HXm03s5gkjLvNTGKbMukmUdH8B+q2LGcyTI81gK5jCCwSyJdJ7T8q0NUEa6aJDlNKoJNoMtsNRVom2ttjAIY0aZ6+Yg1fUzrJBi08HSdM4vpDl8EQeaZoHTPJK15DSeNgHmQ3Bi0NYXtNzgM9/hwxNx9XsZeHQgHQOKb/8vKaJAnhrS8TPsIe/fNXLIFN2UngVsVhJXcE0Z0dOX+L+nroJyXn25a0oEREgimm1+fgmiKjUm+ECLb4uxQl3OgoUQDSzJT1ZNxmeo+sjfy7KXcYVHx26k5fb1nhBMVC9jD7IydzMboWCywTgbGhpbCkyuXhSHlroRL6fbIbWI="
+        - secure: "VkAABOgHkDhG8UVgEe3Nwcpj9ro4y7Yc3JTmp2ZqAlxasYfZttwiChU0E0xC8nvKCEb4jxzH5/X/BiBQz3JG7W3+bt/Eqrxr+rOhTGm5hUz7xsCq96TzCgw/pdjIPURLnjHeOo0sWPpBiTf7L5gXxGR2CVOZLlvdK2kaxzB057mNy4Rm5ZqZ0PQyMa/DbITF6GNK0Z/HuP96KfpxSG/Agrh/NWxqfF1bfiuvGRXWU88w0yXpNVNPdSxwHiQU8PGkJN7O0jAUKyFtQCNwMYS/Mm7MIKO0pYyR8PkMBcnlm4VfZc84wB08OpvDixHzR5MC7S9d+NAMi75WmGMOQF1kVWmkyBOkLMR6lwVlEBGA1PxBLwYQXFlwT29orM96ZIVRpSqw2npw0V/Ci9UuVC+HDtKlgAI75rHJF8YRfOll129Br1UZJ4+U7QzmWSSRPVSV8vC4D35lmqHqruttp50/2dte1bN0HbqpMUIJSkFEKHuE/WVqRU79GzZPVShLRJLgN35K+sydP+UsjTAw697TD8KPbTNDU0MOqAhAPoGfOXJEMnjalpEC8EbmTqhVbNOSxK0lI1nQ8KNVSN2p6DbOaK+92N/98LojJ5M6w/E5wpPYBsSZvCf/zvXTVSygQkTX4CsGNGaf3MKSgHiDSFU3ZnBNpVitTm8maKl/uvX0M2A="
+      install:
+        - cd terraform
+        - wget https://releases.hashicorp.com/terraform/0.12.8/terraform_0.12.8_linux_amd64.zip
+        - unzip terraform_0.12.8_linux_amd64.zip
+        - rm -f terraform_0.12.8_linux_amd64.zip
+      script:
+        - ./terraform init -input=false
+        - ./terraform plan -var image_tag=$TRAVIS_COMMIT
 #        - ./terraform taint -allow-missing aws_ecs_task_definition.bmlt_$(if [ $TRAVIS_BRANCH == "master" ]; then echo latest; else echo unstable; fi)
 #        - ./terraform apply -input=false -auto-approve
 
