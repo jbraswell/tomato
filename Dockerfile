@@ -9,7 +9,7 @@ RUN apk add --no-cache \
     postgresql-dev
 
 RUN apk add --no-cache \
-    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
+    --repository http://dl-cdn.alpinelinux.org/alpine/v3.8/main \
     libressl2.7-libcrypto
 
 RUN apk add --no-cache \
@@ -17,7 +17,7 @@ RUN apk add --no-cache \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
     gdal \
     geos-dev \
-    proj4-dev \
+    proj-dev \
     libspatialite
 
 RUN mkdir /code
