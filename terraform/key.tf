@@ -1,5 +1,5 @@
 data "template_file" "pubkey" {
-  template = file(pathexpand("~/.ssh/id_rsa.pub"))
+  template = file(pathexpand("${path.module}/id_rsa.pub"))
 }
 
 resource "aws_key_pair" "main" {
