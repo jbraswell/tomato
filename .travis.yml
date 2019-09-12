@@ -2,7 +2,6 @@ jobs:
   include:
 
     - stage: docker build
-      if: branch IN (travis)
       services:
         - docker
       script:
@@ -13,7 +12,7 @@ jobs:
           script: push-docker-image.sh
           skip_cleanup: true
           on:
-            branch: master
+            branch: travis
 
 #    - stage: deploy to ecs
 #      if: branch IN (master) AND type != pull_request
