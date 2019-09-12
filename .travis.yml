@@ -7,9 +7,11 @@ jobs:
       script:
         - docker build -f Dockerfile . -t tomato:latest
         - docker tag tomato:latest bmltenabled/tomato:$TRAVIS_COMMIT
+      before_deploy:
+        - chmod +x push-docker-image.sh
       deploy:
         - provider: script
-          script: push-docker-image.sh
+          script: "./push-docker-image.sh"
           skip_cleanup: true
           on:
             branch: travis
