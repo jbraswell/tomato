@@ -7,7 +7,7 @@ jobs:
         - docker
       script:
         - docker build -f Dockerfile . -t tomato:latest
-        - docker tag tomato:$TRAVIS_COMMIT bmltenabled/tomato:$TRAVIS_COMMIT
+        - docker tag tomato:latest bmltenabled/tomato:$TRAVIS_COMMIT
       deploy:
         - provider: script
           script: push-docker-image.sh
