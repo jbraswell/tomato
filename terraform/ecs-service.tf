@@ -104,7 +104,7 @@ resource "aws_ecs_task_definition" "webapp" {
     "links": [],
     "workingDirectory": "/code",
     "readonlyRootFilesystem": null,
-    "image": "${aws_ecr_repository.tomato.repository_url}:${var.image_tag}",
+    "image": "bmltenabled/tomato:${var.image_tag}",
     "command": [
       "sh",
       "-c",
@@ -176,7 +176,7 @@ resource "aws_ecs_task_definition" "tomato_root_server_import" {
     "links": [],
     "workingDirectory": "/code",
     "readonlyRootFilesystem": null,
-    "image": "${aws_ecr_repository.tomato.repository_url}:${var.image_tag}",
+    "image": "bmltenabled/tomato:${var.image_tag}",
     "command": [
       "sh",
       "-c",
