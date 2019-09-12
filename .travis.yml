@@ -18,7 +18,7 @@ jobs:
             branch: travis
 
     - stage: deploy to ecs
-      if: branch IN (master) AND type != pull_request
+      if: branch IN (travis) AND type != pull_request
       env:
         - AWS_DEFAULT_REGION=us-east-1
         - secure: "TGAVwiI/mqteZiPVqzDbDWG0+A9M0cyU7dG4pFVPhWxDomnLGlqQ/XBuVQo420dE34bVbHn4qDUpj4FgoaTwYDGSYEqxdaYjulEfD8AXUZ7d0eemNd0mt87KCoEk1Lt7a+PkwxD2fu2hPcWmW+7oedcMYCC4UX/DcVXlLsSPkMhL/FDzC55JsZwoUOFH6RVX7Acq9ZkCXCwOFNLevh3A4oAVpdhSu0mcubC+b22hRJPvUsjenoO9h5aZcVRWiHKMS5RGn+8+rs2xjAEBkZ/cTc8yO/SvE9kG5yfWIxrPffRWqhbjaXJZK+tu6f2NCfM1ohW/1dRVQjeWMG48q1lMB6e1vU01HXm03s5gkjLvNTGKbMukmUdH8B+q2LGcyTI81gK5jCCwSyJdJ7T8q0NUEa6aJDlNKoJNoMtsNRVom2ttjAIY0aZ6+Yg1fUzrJBi08HSdM4vpDl8EQeaZoHTPJK15DSeNgHmQ3Bi0NYXtNzgM9/hwxNx9XsZeHQgHQOKb/8vKaJAnhrS8TPsIe/fNXLIFN2UngVsVhJXcE0Z0dOX+L+nroJyXn25a0oEREgimm1+fgmiKjUm+ECLb4uxQl3OgoUQDSzJT1ZNxmeo+sjfy7KXcYVHx26k5fb1nhBMVC9jD7IydzMboWCywTgbGhpbCkyuXhSHlroRL6fbIbWI="
