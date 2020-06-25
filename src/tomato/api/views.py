@@ -471,8 +471,6 @@ def semantic_query(request, format='json'):
                 if language != 'en' and not language_qs.exists():
                     return qs.filter(language='en')
                 return language_qs.filter()
-            elif qs.model is Format:
-                return qs.distinct('id')
             return qs.filter()
 
         if format in ('kml', 'poi') and 'data_field_key' in params:
