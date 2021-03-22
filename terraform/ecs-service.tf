@@ -10,7 +10,7 @@ resource "aws_iam_role" "tomato_lb" {
       "Sid": "",
       "Effect": "Allow",
       "Principal": {
-        "Service": "ecs.amazonaws.com"
+        "Service": "ecs-tasks.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
     }
@@ -31,12 +31,15 @@ resource "aws_iam_role_policy" "tomato_lb" {
     {
       "Effect": "Allow",
       "Action": [
-        "ec2:Describe*",
-        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-        "elasticloadbalancing:DeregisterTargets",
-        "elasticloadbalancing:Describe*",
-        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-        "elasticloadbalancing:RegisterTargets"
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams",
+        "s3:GetObject"
       ],
       "Resource": "*"
     }
@@ -47,19 +50,29 @@ EOF
 }
 
 resource "aws_ecs_task_definition" "webapp" {
-  family = "tomato-webapp"
+  family                   = "tomato-webapp"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = var.cpu
+  memory                   = var.memory
+  execution_role_arn       = aws_iam_role.tomato_lb.arn
+  task_role_arn            = aws_iam_role.tomato_lb.arn
 
   container_definitions = <<EOF
 [
   {
+    "cpu": ${var.cpu},
+    "memory": ${var.memory},
+    "image": "${aws_ecr_repository.tomato.repository_url}:latest",
     "volumesFrom": [],
     "extraHosts": null,
     "dnsServers": null,
     "disableNetworking": null,
+    "networkMode": "awsvpc",
     "dnsSearchDomains": null,
     "portMappings": [
       {
-        "hostPort": 0,
+        "hostPort": 8000,
         "containerPort": 8000,
         "protocol": "tcp"
       }
@@ -103,7 +116,6 @@ resource "aws_ecs_task_definition" "webapp" {
     ],
     "workingDirectory": "/code",
     "readonlyRootFilesystem": null,
-    "image": "${aws_ecr_repository.tomato.repository_url}:latest",
     "command": [
       "sh",
       "-c",
@@ -119,7 +131,6 @@ resource "aws_ecs_task_definition" "webapp" {
         "awslogs-stream-prefix": "webapp"
       }
     },
-    "cpu": 700,
     "privileged": null,
     "memoryReservation": 512,
     "linuxParameters": {
@@ -131,160 +142,35 @@ EOF
 
 }
 
-//resource "aws_ecs_task_definition" "webapp" {
-//  family = "tomato-webapp"
-//
-//  container_definitions = <<EOF
-//[
-//  {
-//    "volumesFrom": [],
-//    "extraHosts": null,
-//    "dnsServers": null,
-//    "disableNetworking": null,
-//    "dnsSearchDomains": null,
-//    "portMappings": [
-//      {
-//        "hostPort": 0,
-//        "containerPort": 8000,
-//        "protocol": "tcp"
-//      }
-//    ],
-//    "hostname": null,
-//    "essential": true,
-//    "entryPoint": null,
-//    "mountPoints": [],
-//    "name": "tomato",
-//    "ulimits": null,
-//    "dockerSecurityOptions": null,
-//    "environment": [
-//      {
-//        "name": "RDS_HOST",
-//        "value": "${aws_db_instance.tomato.address}"
-//      },
-//      {
-//        "name": "RDS_NAME",
-//        "value": "${aws_db_instance.tomato.name}"
-//      },
-//      {
-//        "name": "RDS_USER",
-//        "value": "${aws_db_instance.tomato.username}"
-//      },
-//      {
-//        "name": "RDS_PASSWORD",
-//        "value": "${aws_db_instance.tomato.password}"
-//      },
-//      {
-//        "name": "RDS_PORT",
-//        "value": "${aws_db_instance.tomato.port}"
-//      },
-//      {
-//        "name": "GOOGLE_MAPS_API_KEY",
-//        "value": "AIzaSyD4BPAvDHL4CiRcFORdoUCpqwVuVz1F9r8"
-//      },
-//      {
-//        "name": "SECRET_KEY",
-//        "value": "${var.secret_key}"
-//      },
-//      {
-//        "name": "CACHE_FORMATS",
-//        "value": "1"
-//      },
-//      {
-//        "name": "REDIS_LOCATION",
-//        "value": "redis://redis:6379"
-//      }
-//    ],
-//    "links": ["redis"],
-//    "workingDirectory": "/code",
-//    "readonlyRootFilesystem": null,
-//    "image": "${aws_ecr_repository.tomato.repository_url}:latest",
-//    "command": [
-//      "sh",
-//      "-c",
-//      "python3 manage.py initialize && uwsgi --ini /code/uwsgi.ini"
-//    ],
-//    "user": null,
-//    "dockerLabels": null,
-//    "logConfiguration": {
-//      "logDriver": "awslogs",
-//      "options": {
-//        "awslogs-group": "${aws_cloudwatch_log_group.tomato_webapp.name}",
-//        "awslogs-region": "us-east-1",
-//        "awslogs-stream-prefix": "webapp"
-//      }
-//    },
-//    "cpu": 700,
-//    "privileged": null,
-//    "memoryReservation": 512,
-//    "linuxParameters": {
-//      "initProcessEnabled": true
-//    }
-//  },
-//  {
-//    "name": "redis",
-//    "volumesFrom": [],
-//    "extraHosts": null,
-//    "dnsServers": null,
-//    "disableNetworking": null,
-//    "dnsSearchDomains": null,
-//    "portMappings": [
-//      {
-//        "containerPort": 6379,
-//        "protocol": "tcp"
-//      }
-//    ],
-//    "hostname": null,
-//    "essential": true,
-//    "entryPoint": ["docker-entrypoint.sh"],
-//    "mountPoints": [],
-//    "ulimits": null,
-//    "dockerSecurityOptions": null,
-//    "environment": [],
-//    "links": [],
-//    "workingDirectory": "/data",
-//    "readonlyRootFilesystem": null,
-//    "image": "redis:6.0.5",
-//    "command": ["redis-server"],
-//    "user": null,
-//    "dockerLabels": null,
-//    "logConfiguration": {
-//      "logDriver": "awslogs",
-//      "options": {
-//        "awslogs-group": "${aws_cloudwatch_log_group.tomato_webapp.name}",
-//        "awslogs-region": "us-east-1",
-//        "awslogs-stream-prefix": "redis"
-//      }
-//    },
-//    "memoryReservation": 128,
-//    "privileged": null,
-//    "linuxParameters": {
-//      "initProcessEnabled": true
-//    }
-//  }
-//]
-//EOF
-//
-//}
 
 resource "aws_ecs_task_definition" "tomato_root_server_import" {
-  family = "tomato-root-server-import"
-
-  container_definitions = <<EOF
+  family                   = "tomato-root-server-import"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = var.cpu
+  memory                   = var.memory
+  execution_role_arn       = aws_iam_role.tomato_lb.arn
+  task_role_arn            = aws_iam_role.tomato_lb.arn
+  container_definitions    = <<EOF
 [
   {
-    "volumesFrom": [],
-    "extraHosts": null,
-    "dnsServers": null,
-    "disableNetworking": null,
-    "dnsSearchDomains": null,
-    "portMappings": [],
-    "hostname": null,
-    "essential": true,
-    "entryPoint": null,
-    "mountPoints": [],
-    "name": "tomato",
-    "ulimits": null,
-    "dockerSecurityOptions": null,
+    "cpu": ${var.cpu},
+    "memory": ${var.memory},
+    "image": "${aws_ecr_repository.tomato.repository_url}:latest",
+    "name": "tomato-fargate",
+    "networkMode": "awsvpc",
+    "workingDirectory": "/code",
+    "command": [
+      "sh",
+      "-c",
+      "python3 manage.py initialize && python3 manage.py import_root_servers"
+    ],
+    "portMappings": [
+      {
+        "containerPort": 8000,
+        "hostPort": 8000
+      }
+    ],
     "environment": [
       {
         "name": "RDS_HOST",
@@ -307,17 +193,6 @@ resource "aws_ecs_task_definition" "tomato_root_server_import" {
         "value": "${aws_db_instance.tomato.port}"
       }
     ],
-    "links": [],
-    "workingDirectory": "/code",
-    "readonlyRootFilesystem": null,
-    "image": "${aws_ecr_repository.tomato.repository_url}:latest",
-    "command": [
-      "sh",
-      "-c",
-      "python3 manage.py initialize && python3 manage.py import_root_servers"
-    ],
-    "user": null,
-    "dockerLabels": null,
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
@@ -326,9 +201,6 @@ resource "aws_ecs_task_definition" "tomato_root_server_import" {
         "awslogs-stream-prefix": "daemon"
       }
     },
-    "cpu": 256,
-    "privileged": null,
-    "memoryReservation": 256,
     "linuxParameters": {
       "initProcessEnabled": true
     }
@@ -339,12 +211,11 @@ EOF
 }
 
 resource "aws_ecs_service" "webapp" {
-  name            = "webapp"
-  cluster         = aws_ecs_cluster.main.id
-  desired_count   = 2
-  iam_role        = aws_iam_role.tomato_lb.name
-  task_definition = aws_ecs_task_definition.webapp.arn
-
+  name                               = "webapp"
+  cluster                            = aws_ecs_cluster.main.id
+  desired_count                      = 2
+  task_definition                    = aws_ecs_task_definition.webapp.arn
+  launch_type                        = "FARGATE"
   deployment_minimum_healthy_percent = 50
 
   load_balancer {
@@ -353,9 +224,10 @@ resource "aws_ecs_service" "webapp" {
     container_port   = 8000
   }
 
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "attribute:ecs.availability-zone"
+  network_configuration {
+    security_groups  = [aws_security_group.cluster.id]
+    subnets          = [aws_subnet.public_a.id, aws_subnet.public_b.id]
+    assign_public_ip = true
   }
 
   depends_on = [
@@ -363,4 +235,3 @@ resource "aws_ecs_service" "webapp" {
     aws_alb_listener.tomato_https,
   ]
 }
-
